@@ -1,0 +1,121 @@
+name: Release
+
+# Builds, tests and publishes all extensions for a Keycloak version as one GitHub release.
+#
+# - daily: for the latest stable Keycloak release, if there is no release for it yet
+# - on push to main that touches the code: same, so bumping the version in the root pom.xml releases it
+# - manually (Actions > Release > Run workflow): for any Keycloak version, e.g. the one in production
+#
+# Release tag: v<version>-kc<Keycloak version>, one asset per extension: <extension>-<version>-kc<keycloak>.jar
+
+on:
+  schedule:
+    - cron: '23 5 * * *'
+  push:
+    branches: [main]
+    paths: ['**/src/**', '**/pom.xml']
+  workflow_dispatch:
+    inputs:
+      keycloak_version:
+        description: 'Keycloak version (X.Y.Z), empty = latest stable release'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Plan
+        id: plan
+        run: .github/scripts/plan-release.sh
+        env:
+          KEYCLOAK_VERSION: ${{ inputs.keycloak_version }}
+          GH_TOKEN: ${{ github.token }}
+
+      - uses: actions/setup-java@v6
+        if: steps.plan.outputs.build == 'true'
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      # the integration tests start quay.io/keycloak/keycloak:<version> on the runner's Docker
+      - name: Build and test against Keycloak ${{ steps.plan.outputs.keycloak }}
+        if: steps.plan.outputs.build == 'true'
+        run: ./mvnw -B verify -Dkeycloak.version="${KEYCLOAK}"
+        env:
+          KEYCLOAK: ${{ steps.plan.outputs.keycloak }}
+
+      - name: Publish release
+        if: steps.plan.outputs.build == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.plan.outputs.tag }}
+          PLUGIN: ${{ steps.plan.outputs.plugin }}
+          KEYCLOAK: ${{ steps.plan.outputs.keycloak }}
+          LATEST: ${{ steps.plan.outputs.latest }}
+        run: |
+          assets=()
+          for built in */target/keycloak-*.jar; do
+            name="$(basename "$built" .jar)"
+            asset="${name}-${PLUGIN}-kc${KEYCLOAK}.jar"
+            cp "$built" "$asset"
+            assets+=("$asset")
+          done
+          {
+            echo "keycloak-extensions ${PLUGIN} built and tested against Keycloak ${KEYCLOAK}."
+            echo
+            for asset in "${assets[@]}"; do echo "- \`${asset}\`"; done
+            echo
+            echo "Install: copy the jars you need to \`/opt/keycloak/providers/\` (remove older versions of the same"
+            echo "extensions), run \`kc.sh build\` for optimized builds and restart Keycloak. Setup of each extension is"
+            echo "described in its README: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}#extensions"
+            echo
+            echo "Commit: ${GITHUB_SHA}"
+          } > notes.md
+          gh release create "$TAG" "${assets[@]}" \
+            --target "$GITHUB_SHA" \
+            --title "${PLUGIN} for Keycloak ${KEYCLOAK}" \
+            --notes-file notes.md \
+            --latest="$LATEST"
+
+      - name: Close failure issue for this Keycloak version
+        if: success() && steps.plan.outputs.build == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEYCLOAK: ${{ steps.plan.outputs.keycloak }}
+        run: |
+          title="Release for Keycloak ${KEYCLOAK} failed"
+          for n in $(gh issue list --state open --search "in:title \"${title}\"" --json number,title \
+              --jq ".[] | select(.title == \"${title}\") | .number"); do
+            gh issue close "$n" --comment "Fixed: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          done
+
+      - name: Report failure
+        if: failure() && steps.plan.outputs.build == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEYCLOAK: ${{ steps.plan.outputs.keycloak }}
+        run: |
+          title="Release for Keycloak ${KEYCLOAK} failed"
+          run="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          existing=$(gh issue list --state open --search "in:title \"${title}\"" --json number,title \
+              --jq ".[] | select(.title == \"${title}\") | .number" | head -n1)
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "Failed again: ${run}"
+          else
+            gh issue create --title "$title" --body "Building or testing against Keycloak ${KEYCLOAK} failed: ${run}
+
+          Keycloak may have changed an internal SPI an extension uses. Fix the code, bump the version in the root pom.xml
+          if needed and push; the release runs again on push and every day."
+          fi

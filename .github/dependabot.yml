@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: maven
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "chore(deps)"
+    ignore:
+      # the Release workflow builds for every new Keycloak version; keycloak.version in pom.xml is the dev baseline
+      - dependency-name: "org.keycloak:*"
+    groups:
+      maven-plugins:
+        patterns:
+          - "org.apache.maven.plugins:*"
+      test-libraries:
+        patterns:
+          - "org.junit.jupiter:*"
+          - "org.testcontainers:*"
+          - "com.github.dasniko:*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "chore(ci)"

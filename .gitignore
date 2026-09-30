@@ -1,0 +1,19 @@
+# build output
+target/
+dependency-reduced-pom.xml
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# local tooling
+.claude/
+*.log
+hs_err_pid*
+
+# reference checkouts of other projects, never committed
+keycloak-extension-playground-master/

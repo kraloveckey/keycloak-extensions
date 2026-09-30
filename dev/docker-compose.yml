@@ -1,0 +1,30 @@
+# Local playground: Keycloak with all extensions and a separate admin hostname, behind nginx doing the
+# admin-console rewrite for keycloak-impersonation.
+# From the repository root: ./mvnw package -DskipTests && docker compose -f dev/docker-compose.yml up
+# Add to /etc/hosts:  127.0.0.1 auth.localhost admin.auth.localhost
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7.0
+    command: start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: http://auth.localhost:8080
+      KC_HOSTNAME_ADMIN: http://admin.auth.localhost:8080
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED: 'true'
+    volumes:
+      - ../keycloak-impersonation/target/keycloak-impersonation.jar:/opt/keycloak/providers/keycloak-impersonation.jar:ro
+      - ../keycloak-login-notification/target/keycloak-login-notification.jar:/opt/keycloak/providers/keycloak-login-notification.jar:ro
+      - ../keycloak-access-policy/target/keycloak-access-policy.jar:/opt/keycloak/providers/keycloak-access-policy.jar:ro
+      - ../keycloak-idp-link-by-attribute/target/keycloak-idp-link-by-attribute.jar:/opt/keycloak/providers/keycloak-idp-link-by-attribute.jar:ro
+
+  proxy:
+    image: nginx:stable
+    depends_on:
+      - keycloak
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro

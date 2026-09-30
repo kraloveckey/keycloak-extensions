@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>io.github.kraloveckey</groupId>
+		<artifactId>keycloak-extensions</artifactId>
+		<version>0.2.0</version>
+	</parent>
+
+	<artifactId>keycloak-login-notification</artifactId>
+	<name>Keycloak Login Notification</name>
+	<description>Authenticator that e-mails users about sign-ins after a long absence or from a new IP address</description>
+
+	<dependencies>
+		<!-- local/federated user storage, used to keep the plugin's state out of read-only LDAP -->
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-model-storage</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-model-storage-private</artifactId>
+		</dependency>
+	</dependencies>
+</project>
