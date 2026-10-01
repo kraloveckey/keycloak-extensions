@@ -89,8 +89,8 @@ Then set the period back.
 
 ## Where the history is stored
 
-Two user attributes: `login-notification.last-login` (epoch seconds) and `login-notification.recent-ips` (most
-recent first). They are always written to Keycloak's own database:
+Two user attributes: `login-notification.last-login` (epoch seconds) and `login-notification.recent-ips`
+(comma-separated, most recent first). They are always written to Keycloak's own database:
 
 - local users and **imported LDAP users**: on the user's local record;
 - **LDAP users without import**: in Keycloak's federated user storage.

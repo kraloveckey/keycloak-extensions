@@ -1,5 +1,6 @@
 package io.github.kraloveckey.keycloak.loginnotification;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.keycloak.models.KeycloakSession;
@@ -10,7 +11,7 @@ import org.keycloak.storage.UserStoragePrivateUtil;
 import org.keycloak.storage.UserStorageUtil;
 
 /**
- * Last sign-in time and recently used IP addresses, kept as user attributes.
+ * Last sign-in time and recently used IP addresses (one comma-separated value), kept as user attributes.
  * <p>
  * Written to Keycloak's own database, never to a user federation: LDAP users in READ_ONLY mode reject every
  * attribute change, which would otherwise break the sign-in. Imported users get the attributes on their local copy,
@@ -46,12 +47,20 @@ final class LoginHistory {
 
 	/** Most recent first. */
 	List<String> recentIps() {
-		return read(RECENT_IPS);
+		// one comma-separated value; older versions stored one value per address, both are read
+		return read(RECENT_IPS).stream()
+				.flatMap(value -> Arrays.stream(value.split(",")))
+				.map(String::trim)
+				.filter(ip -> !ip.isEmpty())
+				.distinct()
+				.toList();
 	}
 
 	void save(long lastLogin, List<String> recentIps) {
 		write(LAST_LOGIN, List.of(String.valueOf(lastLogin)));
-		write(RECENT_IPS, recentIps);
+		// a single value: Keycloak warns about multi-valued attributes outside the user profile whenever it builds
+		// an e-mail for the user
+		write(RECENT_IPS, recentIps.isEmpty() ? List.of() : List.of(String.join(",", recentIps)));
 	}
 
 	private List<String> read(String name) {
