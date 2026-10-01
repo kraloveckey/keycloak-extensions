@@ -1,6 +1,6 @@
 # keycloak-extensions
 
-Extensions for Keycloak 26.7. Every extension is a separate jar: install only the ones you need.
+Extensions for Keycloak. Every extension is a separate jar: install only the ones you need.
 
 ## Extensions
 
@@ -15,16 +15,16 @@ Each README describes what the extension does, how to set it up and how to troub
 
 ## Compatibility
 
-Built and tested with Keycloak 26.7.0 and 26.7.4. The extensions use Keycloak's internal SPIs, so a jar is
-guaranteed to work only with the Keycloak version it was built for; [Releases](#releases) has a build for every
-Keycloak version.
+Keycloak 26.7 or newer. The extensions use Keycloak's internal SPIs, so take the jar built for **your** Keycloak
+version: [Releases](#releases) has a build, tested against that version, for every Keycloak release since the
+extensions exist. Building for any other version is one Maven flag (see [Build](#build)).
 
 ## Releases
 
 The repository's **Releases** page has one release per Keycloak version, with one jar per extension:
 
 ```
-keycloak-impersonation-<version>-kc<Keycloak version>.jar         e.g. keycloak-impersonation-0.2.0-kc26.7.4.jar
+keycloak-impersonation-<version>-kc<Keycloak version>.jar         e.g. keycloak-impersonation-0.2.1-kc26.8.0.jar
 keycloak-access-policy-<version>-kc<Keycloak version>.jar
 keycloak-login-notification-<version>-kc<Keycloak version>.jar
 keycloak-idp-link-by-attribute-<version>-kc<Keycloak version>.jar
@@ -40,7 +40,7 @@ How releases are produced (`.github/workflows/release.yml`):
 - **On push to `main`** that changes code or a `pom.xml` it does the same. Bump `<version>` in the root `pom.xml`
   to release new code; pushes without a version bump do not create a release (the tag already exists).
 - **Manually** (Actions > Release > Run workflow) for any Keycloak version, for example the one in production:
-  enter `26.7.0` and you get `v0.2.0-kc26.7.0`.
+  enter its version, e.g. `26.7.0`, and you get `v<version>-kc26.7.0`.
 - If building or testing fails for a new Keycloak version, the workflow opens an issue "Release for Keycloak X
   failed" and stops retrying daily until a fix is pushed; the next successful release closes the issue.
 
@@ -52,12 +52,13 @@ JDK 21 or newer. The included `./mvnw` downloads Maven.
 
 ```sh
 ./mvnw clean package -DskipTests                                           # all extensions
-./mvnw clean package -DskipTests -Dkeycloak.version=26.7.4                 # for another Keycloak version
+./mvnw clean package -DskipTests -Dkeycloak.version=<keycloak-version>     # for your Keycloak version
 ./mvnw -pl keycloak-access-policy -am clean package -DskipTests            # a single extension
 ./mvnw clean verify                                                        # with tests
 ```
 
-Every extension ends up in `<extension>/target/<extension>.jar`. The unit tests need nothing; the impersonation
+Every extension ends up in `<extension>/target/<extension>.jar`. Without `-Dkeycloak.version` the build uses the
+version in the root `pom.xml`; use your server's version (`kc.sh --version`) for jars you install. The unit tests need nothing; the impersonation
 integration tests need Docker (Testcontainers).
 
 ## Install
@@ -79,7 +80,8 @@ integration tests need Docker (Testcontainers).
 
 ## Try it locally
 
-`dev/` starts Keycloak 26.7.0 with all extensions, a separate admin hostname and nginx:
+`dev/` starts Keycloak with all extensions, a separate admin hostname and nginx (another Keycloak version:
+`KEYCLOAK_VERSION=<keycloak-version> docker compose ...`):
 
 ```sh
 ./mvnw clean package -DskipTests
@@ -106,7 +108,7 @@ dev/                            docker compose + nginx for local testing
   impersonation, including from the administrator's own browser.
 - The ideas of keycloak-access-policy and keycloak-login-notification come from
   [thomasdarimont/keycloak-extension-playground](https://github.com/thomasdarimont/keycloak-extension-playground).
-  Both are written anew for Keycloak 26.7: client roles of any client and groups in the policy, fail-closed on an
+  Both are written anew: client roles of any client and groups in the policy, fail-closed on an
   invalid policy, e-mails from Keycloak's e-mail theme, state kept out of read-only LDAP.
 
 ## License

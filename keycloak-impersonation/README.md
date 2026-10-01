@@ -7,8 +7,8 @@ with a link-based one. The admin endpoint returns a short-lived, signed, single-
 when the browser opens that link on the realm's own hostname.
 
 Works from the browser the administrator is logged in with, no incognito window or second browser needed.
-Tested with Keycloak 26.7.0 and 26.7.4; a release is built and tested automatically for every new Keycloak
-version (see [Releases](../README.md#releases)).
+Keycloak 26.7 or newer; a release is built and tested automatically for every new Keycloak version (see
+[Releases](../README.md#releases)).
 
 ## Problems it solves
 
@@ -146,7 +146,7 @@ Requirements: JDK 21 or newer and Maven (the included `./mvnw` downloads it).
 ```sh
 # from the repository root
 ./mvnw -pl keycloak-impersonation -am clean package -DskipTests                            # this extension only
-./mvnw -pl keycloak-impersonation -am clean package -DskipTests -Dkeycloak.version=26.7.4  # for another Keycloak
+./mvnw -pl keycloak-impersonation -am clean package -DskipTests -Dkeycloak.version=<keycloak-version>
 ./mvnw -pl keycloak-impersonation -am clean verify                                         # plus integration tests (Docker)
 ```
 
@@ -177,7 +177,7 @@ warnings, one per endpoint. They are expected and confirm the plugin is loaded.
 
 ### Try it locally
 
-`dev/` in the repository root has a Keycloak 26.7.0 with a separate admin hostname behind nginx, with the rewrite
+`dev/` in the repository root has a Keycloak with a separate admin hostname behind nginx, with the rewrite
 in place and all extensions of the repository loaded:
 
 ```sh

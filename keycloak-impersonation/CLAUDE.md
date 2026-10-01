@@ -4,7 +4,7 @@ Module of keycloak-extensions; build commands and the release process are in the
 
 ## What this is
 
-A Keycloak extension (target: Keycloak 26.7) that makes admin impersonation link-based: an admin REST
+A Keycloak extension (Keycloak 26.7 or newer) that makes admin impersonation link-based: an admin REST
 endpoint returns a short-lived, single-use signed link, and the impersonation happens when a browser opens it on
 the realm's own hostname. It fixes https://github.com/keycloak/keycloak/issues/10655 (separate admin hostname) and
 works from the browser the admin is logged in with.

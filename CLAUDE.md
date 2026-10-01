@@ -4,7 +4,7 @@ Guidance for Claude Code (claude.ai/code) in this repository.
 
 ## What this is
 
-keycloak-extensions: Keycloak 26.7 extensions, one Maven module and one jar each, sharing a parent `pom.xml`
+keycloak-extensions: Keycloak extensions (Keycloak 26.7 or newer), one Maven module and one jar each, sharing a parent `pom.xml`
 (Keycloak version, JDK 21, dependency/plugin versions, one version for all modules).
 
 - `keycloak-impersonation`: admin REST + realm resource providers for link-based impersonation. See
@@ -19,8 +19,8 @@ keycloak-extensions: Keycloak 26.7 extensions, one Maven module and one jar each
 ```sh
 ./mvnw clean package -DskipTests                               # all jars: <module>/target/<module>.jar
 ./mvnw -pl keycloak-access-policy -am clean verify             # one module with its tests
-./mvnw clean verify -Dkeycloak.version=26.7.4                  # against another Keycloak
-docker compose -f dev/docker-compose.yml up                    # Keycloak 26.7.0 + all jars + nginx
+./mvnw clean verify -Dkeycloak.version=<keycloak-version>      # against another Keycloak
+docker compose -f dev/docker-compose.yml up                    # Keycloak (KEYCLOAK_VERSION) + all jars + nginx
 ```
 
 Keycloak artifacts are declared with `${keycloak.version}` directly (no third-party BOM: those are not published for

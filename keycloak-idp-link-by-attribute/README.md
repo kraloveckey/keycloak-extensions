@@ -156,7 +156,7 @@ links → Unlink):
 | 8 | no *Attribute name* in the step | "An internal server error has occurred", ERROR in the log |
 | 9 | after linking, a user without the required roles opens a client guarded by the post login flow | denied by the post login flow |
 
-All of them were run against Keycloak 26.7.4 with a second Keycloak realm acting as the OIDC provider.
+All of them were run against Keycloak 26.7.4 and 26.8.0 with a second Keycloak realm acting as the OIDC provider.
 
 Debug logging (`--log-level=INFO,io.github.kraloveckey:debug`) also logs every successful match.
 
