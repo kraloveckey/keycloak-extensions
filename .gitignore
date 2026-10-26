@@ -2,6 +2,9 @@
 target/
 dependency-reduced-pom.xml
 
+# OS
+.DS_Store
+
 # IDEs
 .idea/
 *.iml
@@ -11,9 +14,5 @@ dependency-reduced-pom.xml
 .classpath
 
 # local tooling
-.claude/
 *.log
 hs_err_pid*
-
-# reference checkouts of other projects, never committed
-keycloak-extension-playground-master/
