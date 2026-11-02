@@ -14,11 +14,14 @@ services:
       KC_HOSTNAME_ADMIN: http://admin.auth.localhost:8080
       KC_PROXY_HEADERS: xforwarded
       KC_HTTP_ENABLED: 'true'
+      # admin console tab of keycloak-ldap-relink
+      KC_FEATURES: declarative-ui
     volumes:
       - ../keycloak-impersonation/target/keycloak-impersonation.jar:/opt/keycloak/providers/keycloak-impersonation.jar:ro
       - ../keycloak-login-notification/target/keycloak-login-notification.jar:/opt/keycloak/providers/keycloak-login-notification.jar:ro
       - ../keycloak-access-policy/target/keycloak-access-policy.jar:/opt/keycloak/providers/keycloak-access-policy.jar:ro
       - ../keycloak-idp-link-by-attribute/target/keycloak-idp-link-by-attribute.jar:/opt/keycloak/providers/keycloak-idp-link-by-attribute.jar:ro
+      - ../keycloak-ldap-relink/target/keycloak-ldap-relink.jar:/opt/keycloak/providers/keycloak-ldap-relink.jar:ro
 
   proxy:
     image: nginx:stable
