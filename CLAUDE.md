@@ -13,6 +13,8 @@ keycloak-extensions: Keycloak extensions (Keycloak 26.7 or newer), one Maven mod
 - `keycloak-login-notification`: `Authenticator` "Login notification e-mail" (id `login-notification`).
 - `keycloak-idp-link-by-attribute`: first-broker-login `Authenticator` "Detect existing broker user by attribute"
   (id `idp-detect-existing-by-attribute`).
+- `keycloak-ldap-relink`: admin REST provider + admin console tab (`UiTabProvider`) that link a local user, keeping
+  its ID, to the LDAP entry with the same username. See `keycloak-ldap-relink/CLAUDE.md`.
 
 ## Commands
 
@@ -24,7 +26,7 @@ docker compose -f dev/docker-compose.yml up                    # Keycloak (KEYCL
 ```
 
 Keycloak artifacts are declared with `${keycloak.version}` directly (no third-party BOM: those are not published for
-every Keycloak patch). Unit tests need nothing, the impersonation integration tests need Docker.
+every Keycloak patch). Unit tests need nothing, the impersonation and ldap-relink integration tests need Docker.
 
 ## keycloak-access-policy
 

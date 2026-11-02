@@ -18,6 +18,7 @@ updates:
           - "org.junit.jupiter:*"
           - "org.testcontainers:*"
           - "com.github.dasniko:*"
+          - "com.unboundid:*"
 
   - package-ecosystem: github-actions
     directory: /

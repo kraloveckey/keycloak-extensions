@@ -10,6 +10,7 @@ Extensions for Keycloak. Every extension is a separate jar: install only the one
 | [keycloak-access-policy](keycloak-access-policy/README.md) | One JSON policy per realm that decides who may sign in to which client: by realm roles, client roles (of any client) and groups, including subgroups. Checked on every sign-in, SSO included. |
 | [keycloak-login-notification](keycloak-login-notification/README.md) | E-mails users about a sign-in after a long absence and/or from an IP address they have not used recently. Works with read-only LDAP, never blocks a sign-in. |
 | [keycloak-idp-link-by-attribute](keycloak-idp-link-by-attribute/README.md) | First sign-in through Google or another identity provider: links the provider account to the existing user whose custom attribute (e.g. `workEmail`) equals the provider's e-mail. Clear error pages for not found, duplicates, disabled and already linked users. |
+| [keycloak-ldap-relink](keycloak-ldap-relink/README.md) | Links an existing local user to the LDAP entry with the same username, keeping the user's ID, roles and groups. For people who come back after their LDAP account was deleted. Admin console tab, REST endpoint and script, each with a preview. |
 
 Each README describes what the extension does, how to set it up and how to troubleshoot it.
 
@@ -28,6 +29,7 @@ keycloak-impersonation-<version>-kc<Keycloak version>.jar         e.g. keycloak-
 keycloak-access-policy-<version>-kc<Keycloak version>.jar
 keycloak-login-notification-<version>-kc<Keycloak version>.jar
 keycloak-idp-link-by-attribute-<version>-kc<Keycloak version>.jar
+keycloak-ldap-relink-<version>-kc<Keycloak version>.jar
 ```
 
 Take the jars whose `kc` version matches your server.
@@ -59,7 +61,7 @@ JDK 21 or newer. The included `./mvnw` downloads Maven.
 
 Every extension ends up in `<extension>/target/<extension>.jar`. Without `-Dkeycloak.version` the build uses the
 version in the root `pom.xml`; use your server's version (`kc.sh --version`) for jars you install. The unit tests need nothing; the impersonation
-integration tests need Docker (Testcontainers).
+and ldap-relink integration tests need Docker (Testcontainers).
 
 ## Install
 
@@ -68,7 +70,7 @@ integration tests need Docker (Testcontainers).
 2. If Keycloak starts with `--optimized` or runs from a custom image, run `kc.sh build` or rebuild the image.
 3. Restart Keycloak. The log shows one `KC-SERVICES0047: <id> (...) is implementing the internal SPI ...` warning
    per installed provider: `impersonation` (twice), `access-policy`, `login-notification`,
-   `idp-detect-existing-by-attribute`. They are expected.
+   `idp-detect-existing-by-attribute`, `ldap-relink` (twice). They are expected.
 4. Set up each extension as its README describes.
 
 | Symptom                                       | Cause and fix                                                                             |

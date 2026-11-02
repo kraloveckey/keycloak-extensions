@@ -31,6 +31,7 @@
 		<module>keycloak-login-notification</module>
 		<module>keycloak-access-policy</module>
 		<module>keycloak-idp-link-by-attribute</module>
+		<module>keycloak-ldap-relink</module>
 	</modules>
 
 	<properties>
@@ -43,6 +44,7 @@
 		<junit.version>6.1.3</junit.version>
 		<testcontainers.version>2.0.5</testcontainers.version>
 		<testcontainers-keycloak.version>4.4.0</testcontainers-keycloak.version>
+		<unboundid-ldapsdk.version>7.0.4</unboundid-ldapsdk.version>
 
 		<maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
 		<maven-surefire-plugin.version>3.6.1</maven-surefire-plugin.version>
@@ -89,6 +91,19 @@
 			</dependency>
 
 			<dependency>
+				<groupId>org.keycloak</groupId>
+				<artifactId>keycloak-ldap-federation</artifactId>
+				<version>${keycloak.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.keycloak</groupId>
+				<artifactId>keycloak-kerberos-federation</artifactId>
+				<version>${keycloak.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter</artifactId>
 				<version>${junit.version}</version>
@@ -104,6 +119,12 @@
 				<groupId>com.github.dasniko</groupId>
 				<artifactId>testcontainers-keycloak</artifactId>
 				<version>${testcontainers-keycloak.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.unboundid</groupId>
+				<artifactId>unboundid-ldapsdk</artifactId>
+				<version>${unboundid-ldapsdk.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
