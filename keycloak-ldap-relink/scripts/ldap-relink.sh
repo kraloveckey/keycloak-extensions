@@ -17,6 +17,7 @@
 #   KC_URL             Keycloak base URL, e.g. https://keycloak.example.com
 #   KC_REALM           realm of the users
 #   KC_CLIENT_ID       confidential client with a service account that has realm-management: manage-users
+#                      on Keycloak 26.8.2+, assign kc-admin-api as a default client scope
 #   KC_CLIENT_SECRET
 #   KC_CLIENT_REALM    realm of that client (default: KC_REALM)
 #   KC_CURL_OPTS       extra curl options, e.g. "--cacert /etc/ssl/internal-ca.pem"

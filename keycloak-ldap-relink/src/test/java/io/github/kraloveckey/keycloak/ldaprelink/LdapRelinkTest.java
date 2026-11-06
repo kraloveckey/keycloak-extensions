@@ -211,12 +211,12 @@ public class LdapRelinkTest {
 		staff("viewer", "view-users");
 		staff("helpdesk", "manage-users");
 
-		String viewer = userToken("viewer");
+		String viewer = adminApiToken("viewer");
 		expect(403, api.send(api.request(base + relink(id), viewer).GET()));
 		expect(403, api.send(api.request(base + relink(id) + "/attach", viewer).POST(HttpRequest.BodyPublishers.noBody())));
 		assertTrue(user(id).path("federationLink").isMissingNode());
 
-		String helpdesk = userToken("helpdesk");
+		String helpdesk = adminApiToken("helpdesk");
 		expect(200, api.send(api.request(base + relink(id), helpdesk).GET()));
 		expect(200, api.send(api.request(base + relink(id) + "/attach", helpdesk).POST(HttpRequest.BodyPublishers.noBody())));
 		assertEquals(providerId, user(id).get("federationLink").asText());
@@ -311,9 +311,9 @@ public class LdapRelinkTest {
 		expect(200, imported);
 	}
 
-	private static String userToken(String username) throws Exception {
+	private static String adminApiToken(String username) throws Exception {
 		HttpResponse<String> token = api.postForm(base + "/realms/" + REALM + "/protocol/openid-connect/token", Map.of(
-				"grant_type", "password", "client_id", "tester", "username", username, "password", PASSWORD));
+				"grant_type", "password", "client_id", "admin-cli", "username", username, "password", PASSWORD));
 		expect(200, token);
 		return "Bearer " + JSON.readTree(token.body()).get("access_token").asText();
 	}

@@ -136,9 +136,10 @@ ldap-relink: realm myrealm, 1 user(s), attach
 Exit status `0` when every user is (or can be) linked, `1` when at least one is not, `2` for usage or login errors.
 `--report FILE` appends the same output to a file, e.g. to mail it. Run `./ldap-relink.sh --help` for all options.
 
-The client: confidential, **Service accounts roles** on, everything else off; in its **Service account roles**
-assign `realm-management` → `manage-users`. `KC_CLIENT_REALM` is needed only when the client is in another realm
-than the users.
+Use a confidential client with only **Service accounts roles** enabled. Under **Service account roles**, assign
+`realm-management` → `manage-users`. On Keycloak 26.8.2 and later, also assign the built-in `kc-admin-api` client
+scope as **Default** under **Client scopes**. This gives the script's access token the scope and audience required
+by the Admin REST API. Set `KC_CLIENT_REALM` when the client is in a different realm from the users.
 
 ## Set up
 
