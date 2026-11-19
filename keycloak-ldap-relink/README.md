@@ -57,9 +57,10 @@ nothing.
 
 On the user details page, next to Details, Credentials, ... (scroll the tab bar if it does not fit).
 
-1. **Action** `preview`, **Save**: the result is shown as a message, e.g. "Preview, nothing changed. The user (ID
-   ..., unchanged) would be linked to CN=...; e-mail: old → new; enabled: false → true." It is a red error message
-   because the admin console treats it as "not saved": nothing was.
+1. **Action** `preview`, **Save**: the result is shown as a message, e.g. "PREVIEW ONLY, not an error: nothing was
+   saved. The user (ID ..., unchanged) would be linked to CN=...; e-mail: old → new; enabled: false → true." The
+   admin console shows it in a red box titled "Error could not save item!": a tab can only report a successful save
+   (with a fixed text) or a failed one (with the server's text), and nothing was saved. It is not an error.
 2. **Action** `attach`, **Confirm username**: type the user's username, **Save**. "Saved successfully" means the
    user is linked. If linking is refused, the error message says why and nothing changed. Reload the page to see the
    new values in the other tabs.
