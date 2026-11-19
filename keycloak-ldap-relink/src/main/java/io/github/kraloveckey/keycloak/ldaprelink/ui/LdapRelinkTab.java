@@ -76,11 +76,13 @@ public class LdapRelinkTab implements UiTabProvider, UiTabProviderFactory<Compon
 
 		RelinkResult result = new LdapRelinkService(session, realm).attach(userId, provider, apply);
 		if (!result.linkable()) {
-			throw message("Cannot link: " + String.join(" ", result.problems()));
+			throw message((apply ? "" : "PREVIEW ONLY, nothing was saved. ") + "Cannot link: "
+					+ String.join(" ", result.problems()));
 		}
 		if (!apply) {
-			throw message("Preview, nothing changed. " + describe(result)
-					+ " To link, choose \"Attach\", confirm the username and save.");
+			// the admin console shows every message of a tab as a save error; say plainly that this one is not
+			throw message("PREVIEW ONLY, not an error: nothing was saved. " + describe(result)
+					+ " To link: Action \"attach\", type the username into \"Confirm username\", Save.");
 		}
 		// success: returning normally lets the admin console show "saved"; the change is in the admin events
 	}

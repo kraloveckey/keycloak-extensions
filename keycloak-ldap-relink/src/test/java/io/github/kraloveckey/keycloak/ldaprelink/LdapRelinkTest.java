@@ -231,7 +231,7 @@ public class LdapRelinkTest {
 
 		HttpResponse<String> preview = saveTab(id, "preview", null);
 		expect(400, preview);
-		assertTrue(preview.body().contains("Preview, nothing changed."), preview.body());
+		assertTrue(preview.body().contains("PREVIEW ONLY, not an error: nothing was saved."), preview.body());
 		assertTrue(preview.body().contains("dave.old@example.org"), preview.body());
 		assertTrue(user(id).path("federationLink").isMissingNode());
 
